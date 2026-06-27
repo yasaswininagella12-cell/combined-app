@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import './Quiz.css'
 
 const questions = [
@@ -14,22 +14,12 @@ const questions = [
   },
   {
     question: 'Which CSS property controls the text size?',
-    options: [
-      'text-style',
-      'font-size',
-      'text-size',
-      'font-style',
-    ],
+    options: ['text-style', 'font-size', 'text-size', 'font-style'],
     answer: 1,
   },
   {
     question: 'Which method adds an element to the end of an array in JavaScript?',
-    options: [
-      'push()',
-      'pop()',
-      'shift()',
-      'unshift()',
-    ],
+    options: ['push()', 'pop()', 'shift()', 'unshift()'],
     answer: 0,
   },
   {
@@ -44,32 +34,67 @@ const questions = [
   },
   {
     question: 'Which hook is used for side effects in React?',
+    options: ['useState', 'useEffect', 'useContext', 'useReducer'],
+    answer: 1,
+  },
+  {
+    question: 'What does the `map()` method return in JavaScript?',
     options: [
-      'useState',
-      'useEffect',
-      'useContext',
-      'useReducer',
+      'A new array',
+      'The original array modified',
+      'A boolean',
+      'undefined',
     ],
+    answer: 0,
+  },
+  {
+    question: 'Which tag is used to link a CSS file in HTML?',
+    options: ['<style>', '<css>', '<link>', '<script>'],
+    answer: 2,
+  },
+  {
+    question: 'What is the default local storage limit in most browsers?',
+    options: ['1MB', '5MB', '10MB', 'Unlimited'],
     answer: 1,
   },
 ]
+
+function shuffle(arr) {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
 
 function Quiz() {
   const [current, setCurrent] = useState(0)
   const [score, setScore] = useState(0)
   const [selected, setSelected] = useState(null)
   const [finished, setFinished] = useState(false)
+  const [answers, setAnswers] = useState([])
+
+  const shuffled = useMemo(() => shuffle(questions), [])
 
   const handleAnswer = (index) => {
     if (selected !== null) return
     setSelected(index)
-    if (index === questions[current].answer) {
-      setScore((s) => s + 1)
-    }
+    const correct = index === shuffled[current].answer
+    if (correct) setScore((s) => s + 1)
+    setAnswers((prev) => [
+      ...prev,
+      {
+        question: shuffled[current].question,
+        yourAnswer: shuffled[current].options[index],
+        correctAnswer: shuffled[current].options[shuffled[current].answer],
+        correct,
+      },
+    ])
   }
 
   const next = () => {
-    if (current + 1 < questions.length) {
+    if (current + 1 < shuffled.length) {
       setCurrent((c) => c + 1)
       setSelected(null)
     } else {
@@ -82,16 +107,17 @@ function Quiz() {
     setScore(0)
     setSelected(null)
     setFinished(false)
+    setAnswers([])
   }
 
   if (finished) {
-    const pct = Math.round((score / questions.length) * 100)
+    const pct = Math.round((score / shuffled.length) * 100)
     return (
       <section className="quiz">
         <div className="container quiz__inner">
           <h2 className="quiz__heading">Quiz Complete!</h2>
           <p className="quiz__score">
-            You scored <strong>{score}</strong> out of {questions.length} ({pct}%)
+            You scored <strong>{score}</strong> out of {shuffled.length} ({pct}%)
           </p>
           <p className="quiz__message">
             {pct === 100
@@ -100,20 +126,53 @@ function Quiz() {
                 ? 'Great job!'
                 : 'Keep practicing!'}
           </p>
-          <button className="quiz__btn" onClick={restart}>Restart Quiz</button>
+          <div className="quiz__progress-bar">
+            <div
+              className="quiz__progress-fill"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+          {answers.filter((a) => !a.correct).length > 0 && (
+            <div className="quiz__review">
+              <h3>Review Incorrect Answers</h3>
+              {answers
+                .filter((a) => !a.correct)
+                .map((a, i) => (
+                  <div key={i} className="quiz__review-item">
+                    <p className="quiz__review-q">{a.question}</p>
+                    <p className="quiz__review-wrong">
+                      Your answer: {a.yourAnswer}
+                    </p>
+                    <p className="quiz__review-correct">
+                      Correct: {a.correctAnswer}
+                    </p>
+                  </div>
+                ))}
+            </div>
+          )}
+          <button className="quiz__btn" onClick={restart}>
+            Restart Quiz
+          </button>
         </div>
       </section>
     )
   }
 
-  const q = questions[current]
+  const q = shuffled[current]
+  const progress = ((current + 1) / shuffled.length) * 100
 
   return (
     <section className="quiz">
       <div className="container quiz__inner">
-        <p className="quiz__progress">
-          Question {current + 1} of {questions.length}
-        </p>
+        <div className="quiz__progress">
+          <span>
+            Question {current + 1} of {shuffled.length}
+          </span>
+          <span>{Math.round(progress)}%</span>
+        </div>
+        <div className="quiz__progress-bar">
+          <div className="quiz__progress-fill" style={{ width: `${progress}%` }} />
+        </div>
         <h2 className="quiz__question">{q.question}</h2>
         <div className="quiz__options">
           {q.options.map((opt, i) => {
@@ -136,7 +195,7 @@ function Quiz() {
         </div>
         {selected !== null && (
           <button className="quiz__btn" onClick={next}>
-            {current + 1 < questions.length ? 'Next' : 'Finish'}
+            {current + 1 < shuffled.length ? 'Next' : 'Finish'}
           </button>
         )}
       </div>
