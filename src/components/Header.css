@@ -1,0 +1,36 @@
+.header {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  z-index: 100;
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.header__logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.header__nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.header__nav a {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4b5563;
+  transition: color 0.2s;
+}
+
+.header__nav a:hover {
+  color: #2563eb;
+}
