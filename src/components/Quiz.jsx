@@ -141,6 +141,7 @@ function Quiz() {
                   <div key={i} className="quiz__review-item">
                     <p className="quiz__review-q">{a.question}</p>
                     <p className="quiz__review-wrong">
+                      <p>Yasaswini</p>
                       Your answer: {a.yourAnswer}
                     </p>
                     <p className="quiz__review-correct">
