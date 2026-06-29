@@ -3,11 +3,16 @@ import './App.css'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import Features from './components/Features'
-import Contact from './components/Contact'
+import Testimonials from './components/Testimonials'
+import Team from './components/Team'
 import Pricing from './components/Pricing'
+import FAQ from './components/FAQ'
+import Newsletter from './components/Newsletter'
+import Contact from './components/Contact'
 import Footer from './components/Footer'
 import Quiz from './components/Quiz'
 import NotFound from './components/NotFound'
+import BackToTop from './components/BackToTop'
 
 function App() {
   return (
@@ -20,7 +25,11 @@ function App() {
             <main>
               <Hero />
               <Features />
+              <Testimonials />
+              <Team />
               <Pricing />
+              <FAQ />
+              <Newsletter />
               <Contact />
             </main>
           }
@@ -29,6 +38,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
+      <BackToTop />
     </>
   )
 }

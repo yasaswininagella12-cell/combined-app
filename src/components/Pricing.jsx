@@ -1,51 +1,72 @@
+import { useState } from 'react'
 import './Pricing.css'
 
 const plans = [
   {
     name: 'Starter',
-    price: 'Free',
-    perks: ['1 project', '5 team members', '10GB storage', 'Community support'],
+    price: 9,
+    features: ['1 project', '5 GB storage', 'Basic support', 'Community access'],
   },
   {
     name: 'Pro',
-    price: '$29',
-    period: '/mo',
-    featured: true,
-    perks: ['Unlimited projects', '50 team members', '100GB storage', 'Priority support', 'Analytics'],
+    price: 29,
+    features: ['10 projects', '50 GB storage', 'Priority support', 'Team dashboard', 'API access'],
+    popular: true,
   },
   {
     name: 'Enterprise',
-    price: '$99',
-    period: '/mo',
-    perks: ['Unlimited everything', '1TB storage', 'Dedicated support', 'Custom integrations', 'SLA'],
+    price: 99,
+    features: ['Unlimited projects', '500 GB storage', '24/7 support', 'Custom integrations', 'SLA', 'Dedicated manager'],
   },
 ]
 
 function Pricing() {
+  const [billing, setBilling] = useState('monthly')
+  const multiplier = billing === 'annual' ? 10 : 1
+
   return (
     <section id="pricing" className="pricing">
       <div className="container">
-        <h2 className="pricing__heading">Simple Pricing</h2>
-        <p className="pricing__subtitle">Choose the plan that fits your needs.</p>
+        <div className="pricing__header">
+          <span className="pricing__badge">Pricing</span>
+          <h2 className="pricing__heading">Simple, Transparent Pricing</h2>
+          <p className="pricing__subtitle">Choose the plan that fits your needs. No hidden fees.</p>
+        </div>
+
+        <div className="pricing__toggle">
+          <button
+            className={`pricing__toggle-btn ${billing === 'monthly' ? 'pricing__toggle-btn--active' : ''}`}
+            onClick={() => setBilling('monthly')}
+          >
+            Monthly
+          </button>
+          <button
+            className={`pricing__toggle-btn ${billing === 'annual' ? 'pricing__toggle-btn--active' : ''}`}
+            onClick={() => setBilling('annual')}
+          >
+            Annual <span className="pricing__toggle-save">Save 17%</span>
+          </button>
+        </div>
+
         <div className="pricing__grid">
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`pricing__card${plan.featured ? ' pricing__card--featured' : ''}`}
+              className={`pricing__card ${plan.popular ? 'pricing__card--popular' : ''}`}
             >
-              {plan.featured && <span className="pricing__badge">Popular</span>}
-              <h3 className="pricing__name">{plan.name}</h3>
+              {plan.popular && <span className="pricing__card-badge">Most Popular</span>}
+              <h3 className="pricing__card-name">{plan.name}</h3>
               <p className="pricing__price">
-                <span className="pricing__amount">{plan.price}</span>
-                {plan.period && <span className="pricing__period">{plan.period}</span>}
+                <span className="pricing__amount">${plan.price * multiplier}</span>
+                <span className="pricing__period">/{billing === 'annual' ? 'yr' : 'mo'}</span>
               </p>
-              <ul className="pricing__perks">
-                {plan.perks.map((perk) => (
-                  <li key={perk} className="pricing__perk">{perk}</li>
+              <ul className="pricing__features">
+                {plan.features.map((f) => (
+                  <li key={f} className="pricing__feature">{f}</li>
                 ))}
               </ul>
-              <button className={`pricing__btn${plan.featured ? ' pricing__btn--primary' : ''}`}>
-                {plan.price === 'Free' ? 'Get Started' : 'Subscribe'}
+              <button className={`pricing__btn ${plan.popular ? 'pricing__btn--primary' : ''}`}>
+                {plan.name === 'Starter' ? 'Get Started Free' : 'Subscribe'}
               </button>
             </div>
           ))}

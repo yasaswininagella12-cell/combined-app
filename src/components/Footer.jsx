@@ -2,9 +2,15 @@ import './Footer.css'
 
 function Footer() {
   return (
-    <footer id="contact" className="footer">
+    <footer className="footer">
       <div className="container footer__inner">
-        <p>&copy; {new Date().getFullYear()} Landing Page. All rights reserved.</p>
+        <p className="footer__copy">&copy; {new Date().getFullYear()} Brand. All rights reserved.</p>
+        <div className="footer__links">
+          <a href="#hero">Home</a>
+          <a href="#features">Features</a>
+          <a href="#privacy">Privacy</a>
+          <a href="#terms">Terms</a>
+        </div>
       </div>
     </footer>
   )
